@@ -1,0 +1,67 @@
+{
+  "system": { 
+               "smth" : []
+             },
+
+  "required_angles": ["right_elbow"],
+
+  "angle_base": {
+          "right_elbow": {
+                          "angle": [16, 14, [0.45, 0.45]],
+                          "functions": {
+                                          "detection": {
+                                                         "start_point": 12,
+                                                         "start_threshold": 200
+                                                       },
+                                          "instruction" : {
+                                                            "speed" : [300],
+                                                            "spine_to_vert" : [20],
+                                                            "arm_to_vert" : [60],
+                                                            "instruction_thresholds": [20,60,60,300]
+                                                          },
+                                          "counter": {
+                                                       "interval" : [190, 300]
+                                                      }
+                                        },
+                          "debug": {
+                                     "show_detecred": 0,
+                                     "show_point": 0,
+                                     "show_angle": 1,
+                                     "show_bar": 1,
+                                     "show_instruction": 1,
+                                     "show_speed": 1,
+                                     "draw_array": [0,0,0,1,1,1]
+                                    }
+                          },
+
+          "left_elbow": {
+                          "angle": [15, 13, 11],
+                          "functions": {
+                                          "instruction": {
+                                                            "arm_to_vert": [60]
+                                                          }
+                                        },
+                          "debug": {
+                                     "show_detecred": 0,
+                                     "show_point": 0,
+                                     "show_angle": 0,
+                                     "show_bar": 0,
+                                     "show_instruction": 0,
+                                     "show_speed": 0,
+                                     "draw_arr": [0,0,0,0,0,0]
+                                    }
+                          }
+
+                    },
+
+  "angle_base_full": {
+                       "left_elbow": [15, 13, 11],
+                       "right_elbow": [16, 14, 12],
+                       "left_shoulder": [23, 11, 13],
+                       "right_shoulder": [24, 12, 14],
+                       "left_hip": [25, 23, 11],
+                       "right_hip": [26, 24, 12],
+                       "left_knee": [23, 25, 27],
+                       "right_knee": [24, 26, 28]
+                     }
+}
