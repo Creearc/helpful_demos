@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Creating Real-Time Charts with Flask</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Door 1",
+                    backgroundColor: 'rgb(0, 0, 0)',
+                    borderColor: 'rgb(0, 0, 0)',
+                    data: [],
+                    fill: false,
+                },
+								{
+                    label: "Door 2",
+                    backgroundColor: 'rgb(120, 220, 120)',
+                    borderColor: 'rgb(120, 220, 120)',
+                    data: [],
+                    fill: false,
+                },
+								{
+                    label: "Door 3",
+                    backgroundColor: 'rgb(200, 100, 200)',
+                    borderColor: 'rgb(200, 100, 200)',
+                    data: [],
+                    fill: false,
+                },
+								{
+                    label: "Hand sensors",
+                    backgroundColor: 'rgb(255, 0, 0)',
+                    borderColor: 'rgb(255, 0, 0)',
+                    data: [],
+                    fill: false,
+                },
+								{
+                    label: "Rotator",
+                    backgroundColor: 'rgb(0, 0, 255)',
+                    borderColor: 'rgb(0, 0, 255)',
+                    data: [],
+                    fill: false,
+                },
+								{
+                    label: "Destroyer",
+                    backgroundColor: 'rgb(0, 255, 255)',
+                    borderColor: 'rgb(0, 255, 255)',
+                    data: [],
+                    fill: false,
+                },
+								],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Creating Real-Time Charts with Flask'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        const context = document.getElementById('canvas').getContext('2d');
+
+        const lineChart = new Chart(context, config);
+
+        const source = new EventSource("/chart-data");
+
+        source.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (config.data.labels.length === 300) {
+                config.data.labels.shift();
+                config.data.datasets[0].data.shift();
+								config.data.datasets[1].data.shift();
+								config.data.datasets[2].data.shift();
+								config.data.datasets[3].data.shift();
+								config.data.datasets[4].data.shift();
+								config.data.datasets[5].data.shift();
+            }
+            config.data.labels.push(data.time);
+            config.data.datasets[0].data.push(data.door1);
+						config.data.datasets[1].data.push(data.door2);
+						config.data.datasets[2].data.push(data.door3);
+						config.data.datasets[3].data.push(data.ir);
+						config.data.datasets[4].data.push(data.rotator);
+						config.data.datasets[5].data.push(data.destroyer);
+            lineChart.update();
+        }
+    });
+</script>
+</body>
+</html>
