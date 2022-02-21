@@ -23,7 +23,6 @@ class Camera():
 
 
     def stop(self):
-        self.c.kill()
         self.cam.release()        
 
 
@@ -33,14 +32,13 @@ class Camera():
             if not ret:
                 time.sleep(0.1)
                 continue
-            return img
+            yield img
 
 
 if __name__ == '__main__':
     try:
         c = Camera(0)
-        while True:
-            img = c.get_img()
+        for img in c.get_img():
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
