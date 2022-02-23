@@ -9,11 +9,11 @@ class Video():
         self.path = path
         CODEC = cv2.VideoWriter_fourcc('M','J','P','G')
         self.cam = cv2.VideoCapture(self.path)
-        self.cam.set(cv2.CAP_PROP_FOURCC, CODEC)
-        self.cam.set(cv2.CAP_PROP_FPS, 60)
-        if use_buffer:
-            self.cam.set(cv2.CAP_PROP_BUFFERSIZE, 2)
 
+        self.frame_count = int(vid_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frame_rate = int(vid_capture.get(cv2.CAP_PROP_FPS))
+        self.w = int(vid_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.h = int(vid_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     def stop(self):
         self.cam.release()        
