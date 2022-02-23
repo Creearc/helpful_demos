@@ -10,10 +10,10 @@ class Video():
         CODEC = cv2.VideoWriter_fourcc('M','J','P','G')
         self.cam = cv2.VideoCapture(self.path)
 
-        self.frame_count = int(vid_capture.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.frame_rate = int(vid_capture.get(cv2.CAP_PROP_FPS))
-        self.w = int(vid_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.h = int(vid_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.frame_count = int(self.cam.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frame_rate = int(self.cam.get(cv2.CAP_PROP_FPS))
+        self.w = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.h = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     def stop(self):
         self.cam.release()        
