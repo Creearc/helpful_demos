@@ -1,0 +1,67 @@
+sudo apt --purge remove nvidia-*
+sudo apt --purge remove cuda-*
+
+sudo apt install -y dkms git
+git clone https://github.com/tomaspinho/rtl8821ce.git
+cd rtl8821ce
+sudo ./dkms-install.sh
+sudo modprobe 8821ce
+
+
+sudo apt update && sudo apt upgrade -y
+# ubuntu-drivers devices
+sudo apt update
+sudo apt install nvidia-driver-418
+sudo reboot
+
+wget https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+sudo apt-get update
+
+sudo apt-get install cuda-toolkit-10.1
+sudo nano ~/.bashrc
+
+# NVIDIA CUDA Toolkit
+export PATH=/usr/local/cuda-10.1/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64
+
+
+source ~/.bashrc
+
+### Download  cuDNN 7.6.5 for Cuda 10.1
+
+sudo dpkg -i libcudnn7_7.6.5.32-1+cuda10.1_amd64.deb
+sudo dpkg -i libcudnn7-dev_7.6.5.32-1+cuda10.1_amd64.deb
+sudo dpkg -i libcudnn7-doc_7.6.5.32-1+cuda10.1_amd64.deb
+
+nvcc -V
+nvidia-smi
+sudo reboot
+
+
+sudo apt-get install openjdk-8-jdk git python-dev python3-dev python-numpy python3-numpy build-essential python-pip python3-pip python-virtualenv swig python-wheel libcurl3-dev curl
+python3 -m pip install lxml
+python3 -m pip install --upgrade pip
+git clone https://github.com/Creearc/yolo4
+sudo python3 -m pip install -r ./requirements.txt
+
+
+git clone https://github.com/pythonlessons/TensorFlow-2.x-YOLOv3
+cd TensorFlow-2.x-YOLOv3/
+sudo python3 -m pip install -r ./requirements.txt
+wget -P model_data https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
+python3 mnist/make_data.py
+sudo nano yolov3/configs.py
+python3 train.py
+
+screen -dmS nn -L -Logfile ~/logfile_1.txt python3 train.py
+screen -dmS nn -L -Logfile ~/logfile_1.txt 
+
+
+
+
+
+
+
+

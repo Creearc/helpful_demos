@@ -1,0 +1,102 @@
+--Virtual Environment--
+
+sudo pip install virtualenv virtualenvwrapper
+
+nano ~/.bashrc
+
+#Add to the end of file
+# virtualenv and virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+
+source ~/.bashrc
+mkvirtualenv test_1 -p python3
+
+_______________________________________________________
+--Ubuntu--
+
+pip install --ignore-installed setuptools==39.1.0
+pip install --ignore-installed keras==2.1.5
+pip install --ignore-installed keras-applications==1.0.8
+pip install --ignore-installed keras-preprocessing==1.1.0
+pip install --ignore-installed tensorflow-gpu==1.12.0
+pip install --ignore-installed tensorboard==1.12.0
+pip install --ignore-installed protobuf==3.14.0
+pip install --ignore-installed numpy==1.17.4
+pip install --ignore-installed pandas==0.25.3
+pip install --ignore-installed pillow==6.2.1
+pip install --ignore-installed imutils==0.5.3
+pip install --ignore-installed h5py==2.10.0
+pip install --ignore-installed matplotlib==3.0.3
+pip install --ignore-installed opencv-contrib-python==4.1.1.26
+
+_______________________________________________________
+--Raspbery Pi 4--
+
+pip install tensorflow
+pip install opencv-contrib-python==4.1.0.25
+pip install  keras==2.1.5
+pip install keras-applications==1.0.8
+pip install  keras-preprocessing==1.1.0
+pip install  pillow==6.2.1
+pip install imutils==0.5.3
+pip install h5py==2.10.0
+pip install matplotlib==3.0.3
+pip install mss
+
+sudo python3 -m pip install tensorflow
+sudo python3 -m pip install opencv-contrib-python==4.1.0.25
+sudo python3 -m pip install  keras==2.1.5
+sudo python3 -m pip install keras-applications==1.0.8
+sudo python3 -m pip install  keras-preprocessing==1.1.0
+sudo python3 -m pip install  pillow==6.2.1
+sudo python3 -m pip install imutils==0.5.3
+sudo python3 -m pip install h5py==2.10.0
+sudo python3 -m pip install matplotlib==3.0.3
+sudo python3 -m pip install mss
+
+sudo apt-get install python3-h5py -y
+sudo apt-get install libatlas-base-dev  -y
+sudo apt-get install libjasper-dev -y
+sudo apt-get install libqtgui4 -y
+sudo apt-get install python3-pyqt5 -y
+sudo apt install libqt4-test -y
+
+python3 voc_to_YOLOv3.py -F dataset/lum/ -N YOLOv3-custom-training/txts/lum/LumDetector.txt
+
+python3 train.py -A txts/lum/LumDetector.txt -C txts/lum/LumDetector_classes.txt -O logs/lum/  -F 10 -f 200
+
+______________________________________________________________
+python3 voc_to_YOLOv3.py -F dataset/bottles_epic/ -N YOLOv3-custom-training/txts/bottles_epic_1/Bottles.txt 
+python3 voc_to_YOLOv3.py -F dataset/bottles_small/ -N YOLOv3-custom-training/txts/bottles_small_1/Bottles.txt 
+
+python3 train.py -A txts/bottles_5/Bottles.txt  -C txts/bottles_5/Bottles_classes.txt -O logs/bottles_5/ -M logs/bottles_4/trained_weights_final_t.h5
+python3 train.py -A txts/bottles_c_1/Bottles.txt  -C txts/bottles_c_1/Bottles_classes.txt -O logs/bottles_c_1/  -F 50 -f 100
+python3 train.py -A txts/bottles_c_5/Bottles.txt  -C txts/bottles_c_5/Bottles_classes.txt -O logs/bottles_c_5/  -M logs/bottles_c_4/trained_weights_final_t.h5 -F 0 -f 100
+
+python3 train.py -A txts/bottles_w_6/Bottles.txt  -C txts/bottles_w_6/Bottles_classes.txt -O logs/bottles_w_8/  -M logs/bottles_w_7/trained_weights_final_t.h5 -F 0 -f 100
+
+python3 train_real_val.py -V txts/bottles_small/Bottles.txt -A txts/bottles_epic/Bottles.txt  -C txts/bottles_epic/Bottles_classes.txt -O logs/bottles_w_14/  -M logs/bottles_w_13/trained_weights_final_t.h5 -F 0 -f 100
+python3 train_real_val.py -V txts/bottles_small_1/Bottles.txt -A txts/bottles_epic_1/Bottles.txt  -C txts/bottles_epic_1/Bottles_classes.txt -O logs/bottles_r_0/   -F 10 -f 100
+
+screen -dmS nn -L -Logfile ~/logfile_3.txt 
+
+
+______________________________________________________________
+python3 voc_to_YOLOv3.py -F dataset/lum_b/ -N YOLOv3-custom-training/txts/lum_b/LumDetector.txt 
+python3 voc_to_YOLOv3.py -F dataset/lum_r/ -N YOLOv3-custom-training/txts/lum_r/LumDetector.txt 
+
+python3 train_combine_2.py -V txts/lum_r/LumDetector.txt -A txts/lum_b/LumDetector.txt -C txts/lum_b/LumDetector_classes.txt -O logs/lum_2/  -F 10 -f 200 -M logs/lum/trained_weights_final_t.h5
+
+______________________________________________________________
+python3 voc_to_YOLOv3.py -F dataset/smart9/ -N YOLOv3-custom-training/txts/smart_9/Smart.txt 
+
+python3 train.py -A txts/smart_6/Smart.txt   -C txts/smart_6/Smart_classes.txt  -O logs/smart_6/  -F 30 -f 200
+
+python3 train_real_val.py -V txts/smart_4/Smart.txt -A txts/smart_6/Smart.txt  -C txts/smart_6/Smart_classes.txt -O logs/smart_6/   -M logs/smart_2_1/trained_weights_final_t.h5 -F 0 -f 2000
+
+
+python3 imgs_to_jpg.py -F dataset/smart6/aluminium/
+python3 clean_xml.py -F dataset/smart6/aluminium/
+python3 delete_broken.py -F dataset/smart6/aluminium/
