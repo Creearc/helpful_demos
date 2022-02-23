@@ -19,20 +19,20 @@ class Video():
         self.cam.release()        
 
 
-    def get_img(self):
-        while self.cam.isOpened():
+    def get_img(self, first_frame=0, last_frame=self.frame_count, step=1):
+        for frame_number in range(first_frame, last_frame, step):
             ret, img = self.cam.read()
             if not ret:
                 time.sleep(0.1)
                 continue
-            yield img
+            yield frame_number, img
 
 
 if __name__ == '__main__':
     try:
         path = 'D:/exercise_tracker/Robot trainer video/IMG_0340.mp4'
         c = Video(path)
-        for img in c.get_img():
+        for frame_number, img in c.get_img():
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
