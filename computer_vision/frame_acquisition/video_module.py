@@ -7,7 +7,6 @@ import time
 class Video():
     def __init__(self, path, use_buffer=True):
         self.path = path
-        CODEC = cv2.VideoWriter_fourcc('M','J','P','G')
         self.cam = cv2.VideoCapture(self.path)
 
         self.frame_count = int(self.cam.get(cv2.CAP_PROP_FRAME_COUNT))
