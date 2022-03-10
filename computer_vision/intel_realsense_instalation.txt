@@ -1,0 +1,79 @@
+1413  sudo python3 -m pip install pyrealsense2
+ 1414  git clone https://github.com/IntelRealSense/librealsense
+ 1415  ls
+ 1416  cd librealsense/
+ 1417  ls
+ 1418  mkdir build
+ 1419  cd build
+ 1420  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1421  make -j4
+ 1422  sudo make install
+ 1423  export PYTHONPATH=$PYTHONPATH:/usr/local/lib
+ 1424  python3
+ 1425  cd ..
+ 1426  python3
+ 1427  ls
+ 1428  sudo nano test.py
+ 1429  cd librealsense/wrappers/
+ 1430  ls
+ 1431  cd python/
+ 1432  mkdir build
+ 1433  cd build
+ 1434  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1435  cd ..
+ 1436  mkdir build
+ 1437  cd build
+ 1438  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1439  cd ..
+ 1440  ls
+ 1441  sudo rm -rf build
+ 1442  mkdir build
+ 1443  cd build
+ 1444  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1445  sudo apt update && sudo apt upgrade
+ 1446  sudo apt upgrade cmake
+ 1447  sudo apt purge cmake
+ 1448  sudo apt upgrade cmake
+ 1449  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1450  cd ..
+ 1451  sudo rm -rf build
+ 1452  mkdir build
+ 1453  cd build
+ 1454  cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true
+ 1455  make -j4
+ 1456  python3
+ 1457  ifconfig
+ 1458  git clone https://github.com/IntelRealSense/librealsense
+ 1459  sudo rm -rf librealsense/
+ 1460  git clone https://github.com/IntelRealSense/librealsense
+ 1461  cd ~/librealsense
+ 1462  mkdir  build  && cd build
+ 1463  cmake .. -DBUILD_EXAMPLES=true -DCMAKE_BUILD_TYPE=Release -DFORCE_LIBUVC=true
+ 1464  make -j4
+ 1465  sudo make install
+ 1466  cd ~/librealsense/build
+ 1467  cmake .. -DBUILD_PYTHON_BINDINGS=bool:true -DPYTHON_EXECUTABLE=$(which python3)
+ 1468  make -j4
+ 1469  sudo make install
+ 1470  sudo nano ~/.zshrc
+ 1471  source ~/.zshrc
+ 1472  sudo apt-get install python-opengl
+ 1473  sudo python3 -m pip install pyopengl
+ 1474  sudo python3 -m pip install pyopengl_accelerate
+ 1475  sudo nano /etc/dphys-swapfile
+ 1476  sudo raspi-config
+ 1477  sudo reboot
+ 1478  realsense-viewer
+ 1479  realsense-viewer -h
+ 1480  cd /
+ 1481  find -name "*realsense*"
+ 1482  sudo find -name "*realsense*"
+ 1483  sudo nano /home/pi/.realsense-config.json
+ 1484  realsense-viewer
+ 1485  python3 test.py
+ 1486  cd ~
+ 1487  python3 test.py
+ 1488  python3
+ 1489  ls /usr/lib/python3/dist-packages/pyrealsense2
+ 1490  pip install pyrealsense2
+ 1491  python3
