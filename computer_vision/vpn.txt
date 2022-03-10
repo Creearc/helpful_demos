@@ -1,0 +1,25 @@
+SERVER
+
+wget https://git.io/vpn -O openvpn-install.sh
+sudo bash openvpn-install.sh
+sudo apt-get install openvpn easy-rsa
+sudo cp -R /usr/share/easy-rsa /etc/openvpn/
+
+sudo service openvpn start
+sudo service openvpn status
+sudo systemctl enable openvpn
+
+sudo cat /root/welding-robot.ovpn
+COPY TO CLIENT ^
+_________________________________________
+CLIENT
+
+sudo apt-get install openvpn easy-rsa
+sudo nano /etc/openvpn/client/welding-robot.conf
+PAST FROM SERVER ^
+
+sudo systemctl start openvpn-client@welding-robot
+sudo systemctl status openvpn-client@welding-robot
+sudo systemctl enable openvpn-client@welding-robot
+
+sudo reboot
