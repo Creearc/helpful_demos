@@ -76,7 +76,7 @@ def median_filter(img, window):
 img = cv2.imread('samp.jpg')
 cv2.imshow('samp.jpg',img)
 #cv2.imwrite('samp.jpg',res)
-
+'''
 # a) ----------------------------------------------------------------- a)
 
 #Global contrast change (manually)
@@ -95,7 +95,7 @@ res=cv2.merge((b,b,b))
 cv2.imshow('resa2.jpg',res)
 plt.hist(res.flatten(),256,[0,256], color = 'g')
 plt.show()
-
+'''
 # b) ----------------------------------------------------------------- b)
 #Gaussian blur (manually)
 img = cv2.imread('samp.jpg')
@@ -105,7 +105,7 @@ cv2.imshow('resb1.jpg',image_gauss)
 #Gaussian blur (library)
 res2 = cv2.GaussianBlur(img, (5,5), 0)
 cv2.imshow('resb2.jpg',res2)
-
+'''
 # c) ----------------------------------------------------------------- c)
 #Difference filter (manually)
 img = cv2.imread('samp.jpg')
@@ -133,6 +133,6 @@ cv2.imshow('resd1.jpg', image_median)
 #Median filter (library)
 res = cv2.medianBlur(img,3)
 cv2.imshow('resd2.jpg',res)
-
+'''
 cv2.waitKey(0)
 cv2.destroyAllWindows()
