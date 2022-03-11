@@ -30,7 +30,7 @@ def global_contrast(img):
     arr = np.asarray(img, dtype = 'uint8')
     for row in range(0, arr.shape[0]):
         for col in range(0, arr.shape[1]):
-            arr[row][col] = arr[row][col]*0.5
+            arr[row][col] = arr[row][col]*0.5 # changeable coef?
             if arr[row][col][0] > 255:
                 arr[row][col] = [255,255,255]
             elif arr[row][col][0] < 0:
@@ -38,17 +38,19 @@ def global_contrast(img):
     return arr
 
 
-def gaussian_blur(img):
+def gaussian_blur(img, kernel = None):
     '''
 
     '''
-    kernel = np.array([[0.0, 1.0, 2.0, 1.0, 0.0], 
-                   [1.0, 3.0, 5.0, 3.0, 1.0],
-                   [2.0, 5.0, 9.0, 5.0, 2.0],
-                   [1.0, 3.0, 5.0, 3.0, 1.0],
-                   [0.0, 1.0, 2.0, 1.0, 0.0]])
+    if kernel is None:
+        kernel = np.array([[0.0, 1.0, 2.0, 1.0, 0.0], 
+                           [1.0, 3.0, 5.0, 3.0, 1.0],
+                           [2.0, 5.0, 9.0, 5.0, 2.0],
+                           [1.0, 3.0, 5.0, 3.0, 1.0],
+                           [0.0, 1.0, 2.0, 1.0, 0.0]])
+    
     kernel = kernel / np.sum(kernel)
-    image_gauss = conv(img,kernel)
+    image_gauss = convolution(img, kernel)
     return image_gauss
 
 
@@ -62,7 +64,7 @@ def difference_blur(img):
                        [ 0.0,  -1.0,  -2.0, -1.0,  0.0],
                        [ 0.0,   0.0,  -1.0,  0.0,  0.0]])
     kernel = kernel / (np.sum(kernel) if np.sum(kernel)!=0 else 1) #25
-    image_gauss = conv(img,kernel)
+    image_gauss = convolution(img, kernel)
     return image_gauss
     
 
