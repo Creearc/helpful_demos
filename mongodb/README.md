@@ -33,6 +33,8 @@ https://www.mongodb.com/try/download/community?tck=docs_server&_ga=2.80979607.10
 bind_ip = 0.0.0.0
 ```
 
+Добавить папку ```bin``` из mongoshell в PATH
+
 Запуск сервера с MongoDB (где drying папка где будет храниться база данных)
 ```
 "C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe" --dbpath="D:\MongoDB\drying"
