@@ -35,9 +35,9 @@ bind_ip = 0.0.0.0
 
 Добавить папку ```bin``` из mongoshell в ```PATH```
 
-Запуск сервера с ```MongoDB``` (где drying папка где будет храниться база данных)
+Запуск сервера с ```MongoDB``` (где data папка где будет храниться база данных)
 ```
-"C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe" --dbpath="D:\MongoDB\drying"
+"C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe" --dbpath="D:\MongoDB\data"
 ```
 
 Запустить ```mongoshell``` и проверить работоспособность
