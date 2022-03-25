@@ -26,3 +26,8 @@ Image restoration
 RelTR: end-to-end scene graph generation
  - https://github.com/yrcong/RelTR
 <br/>
+
+Real-time **networks** for mobile devices
+- https://github.com/wpf535236337/real-time-network
+<br/>
+
