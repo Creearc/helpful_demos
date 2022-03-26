@@ -1,0 +1,24 @@
+---------------------------------------------------
+## Add to PATH
+
+C:\Users\Aleksandr\Anaconda3
+C:\Users\Aleksandr\Anaconda3\Scripts
+---------------------------------------------------
+## List of existing environments
+
+conda env list
+---------------------------------------------------
+## Create environment tf2
+
+conda create -n tf2 python=3.7.11 anaconda
+---------------------------------------------------
+## Remove environment tf2
+
+conda remove -n tf2 --all
+---------------------------------------------------
+---------------------------------------------------
+---------------------------------------------------
+## Add environment to jupyter kernel
+
+conda install ipykernel
+python -m ipykernel install --user --name tf2
