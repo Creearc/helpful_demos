@@ -1,5 +1,6 @@
 import pyrealsense2.pyrealsense2 as rs
 import threading
+from multiprocessing import Process, Queue, Value
 import numpy as np
 import cv2
 import time
@@ -10,35 +11,52 @@ import os
 class RealsenseCamera:
     def __init__(self,
                  w=640, h=480,
+                 multiproc=False,
                  debug=False):
+
+        self.debug = debug
 
         self.w = w
         self.h = h
-        
-        self.lock = threading.Lock()
-        self.debug = debug
+
         self.depth_image = None
-        self.color_image =None
+        self.color_image = None
         self.stop = False
 
-        # Configure depth and color streams
-        pipeline = rs.pipeline()
-        config = rs.config()
+        self.multiprocessing = multiproc
 
-        config.enable_stream(rs.stream.depth,
+        if not self.multiprocessing:      
+            self.lock = threading.Lock()
+            
+        else:
+            self.depth_q = Queue(1)
+            self.color_q = Queue(1)
+
+        # Configure depth and color streams
+        self.pipeline = rs.pipeline()
+        self.config = rs.config()
+
+        self.config.enable_stream(rs.stream.depth,
                              self.w, self.h, rs.format.z16, 30)
-        config.enable_stream(rs.stream.color,
+        self.config.enable_stream(rs.stream.color,
                              self.w, self.h, rs.format.bgr8, 30)        
         print('[RealsenseCamera] Ready')
 
 
     def get_img(self):
-        with self.lock:
-            return [self.color_image, depth_image]
+        if not self.multiprocessing:
+            with self.lock:
+                return [self.color_image, self.depth_image]
+        else:
+            if not self.depth_q.empty(): 
+                self.depth_image = self.depth_q.get_nowait()
+            if not self.color_q.empty():
+                self.color_image = self.color_q.get_nowait()
+            return [self.color_image, self.depth_image]
 
     def process(self):
         # Start streaming
-        profile = pipeline.start(config)
+        profile = self.pipeline.start(self.config)
 
         depth_sensor = profile.get_device().first_depth_sensor()
         depth_scale = depth_sensor.get_depth_scale()
@@ -51,7 +69,7 @@ class RealsenseCamera:
         align = rs.align(align_to)
 
         while not self.stop:
-            frames = pipeline.wait_for_frames()
+            frames = self.pipeline.wait_for_frames()
             aligned_frames = align.process(frames)
 
             aligned_depth_frame = aligned_frames.get_depth_frame()
@@ -63,14 +81,24 @@ class RealsenseCamera:
             depth_image = np.asanyarray(aligned_depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
 
-            with self.lock:
-                self.depth_image = depth_image.copy()
-                self.color_image = color_image.copy()
+            if not self.multiprocessing:
+                with self.lock:
+                    self.depth_image = depth_image.copy()
+                    self.color_image = color_image.copy()
+            else:
+                if not self.depth_q.full():
+                    self.depth_q.put_nowait(depth_image.copy())
+                if not self.color_q.full():
+                    self.color_q.put_nowait(color_image.copy())
       
 
 
     def start(self):
-        self.c = threading.Thread(target=self.process, args=())
-        self.c.start()
+        if not self.multiprocessing:
+            self.c = threading.Thread(target=self.process, args=())
+            self.c.start()
+        else:
+            self.c = Process(target=self.process, args=())
+            self.c.start()
 
         
