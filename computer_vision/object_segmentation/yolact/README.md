@@ -1,5 +1,5 @@
 
-## YOLACT
+## YOLACT (Instance segmentation)
 **Original repository**
   - https://github.com/dbolya/yolact
 
