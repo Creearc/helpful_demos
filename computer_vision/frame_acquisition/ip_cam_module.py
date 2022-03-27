@@ -44,7 +44,7 @@ class IPCamera:
                 continue
             
             with self.lock:
-                self.img = img
+                self.img = img.copy()
             
             if self.debug:
                 i += 1
