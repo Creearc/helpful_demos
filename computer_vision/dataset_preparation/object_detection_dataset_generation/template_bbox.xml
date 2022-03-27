@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>{}</filename>
+	<path>{}</path>
+	<source>
+		<database>custom_generated</database>
+	</source>
+	<size>
+		<width>{}</width>
+		<height>{}</height>
+		<depth>{}</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>object</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>{}</xmin>
+			<ymin>{}</ymin>
+			<xmax>{}</xmax>
+			<ymax>{}</ymax>
+		</bndbox>
+	</object>
+</annotation>

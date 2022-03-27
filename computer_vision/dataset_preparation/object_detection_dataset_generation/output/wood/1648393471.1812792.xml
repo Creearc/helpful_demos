@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>1648393471.1812792.jpg</filename>
+	<path>output/wood/\1648393471.1812792.jpg</path>
+	<source>
+		<database>custom_generated</database>
+	</source>
+	<size>
+		<width>720</width>
+		<height>405</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>object</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>40</xmin>
+			<ymin>-22</ymin>
+			<xmax>206</xmax>
+			<ymax>55</ymax>
+		</bndbox>
+	</object>
+</annotation>

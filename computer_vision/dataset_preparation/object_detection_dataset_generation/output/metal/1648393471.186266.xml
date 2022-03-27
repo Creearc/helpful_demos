@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>1648393471.186266.jpg</filename>
+	<path>output/metal/\1648393471.186266.jpg</path>
+	<source>
+		<database>custom_generated</database>
+	</source>
+	<size>
+		<width>720</width>
+		<height>405</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>object</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>383</xmin>
+			<ymin>154</ymin>
+			<xmax>544</xmax>
+			<ymax>211</ymax>
+		</bndbox>
+	</object>
+</annotation>
