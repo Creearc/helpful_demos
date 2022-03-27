@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import imageio
+#import imageio
 import imutils
 import time
 
@@ -8,6 +8,7 @@ def detectAndDescribe(image, method=None):
     """
     Compute key points and feature descriptors using an specific method
     """
+    
     assert method is not None, "You need to define a feature detection method. Values are: 'sift', 'surf'"
     
     # detect and extract features from the image
@@ -26,7 +27,6 @@ def detectAndDescribe(image, method=None):
     
     return (kps, features)
 
-
 def createMatcher(method,crossCheck):
     "Create and return a Matcher Object"
     
@@ -35,7 +35,6 @@ def createMatcher(method,crossCheck):
     elif method == 'orb' or method == 'brisk':
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=crossCheck)
     return bf
-
 
 def matchKeyPointsBF(featuresA, featuresB, method):
     bf = createMatcher(method, crossCheck=True)
@@ -48,7 +47,6 @@ def matchKeyPointsBF(featuresA, featuresB, method):
     rawMatches = sorted(best_matches, key = lambda x:x.distance)
     print("Raw matches (Brute force):", len(rawMatches))
     return rawMatches
-
 
 def matchKeyPointsKNN(featuresA, featuresB, ratio, method):
     bf = createMatcher(method, crossCheck=False)
@@ -71,27 +69,7 @@ def matchKeyPointsKNN(featuresA, featuresB, ratio, method):
         return matches
 
 
-def getHomography(kpsA, kpsB, featuresA, featuresB, matches, reprojThresh):
-    # convert the keypoints to numpy arrays
-    kpsA = np.float32([kp.pt for kp in kpsA])
-    kpsB = np.float32([kp.pt for kp in kpsB])
-
-    if len(matches) > 4:
-
-        # construct the two sets of points
-        ptsA = np.float32([kpsA[m.queryIdx] for m in matches])
-        ptsB = np.float32([kpsB[m.trainIdx] for m in matches])
-
-        # estimate the homography between the sets of points
-        (H, status) = cv2.findHomography(ptsA, ptsB, cv2.RANSAC,
-            reprojThresh)
-
-        return (matches, H, status)
-    else:
-        return None
-
-
-def combine(img1, img2, out, pos, rewrite = False, exp_step = 150, feature_extractor = 'orb', feature_matching = 'knn'):
+def combine(img1, img2, out, pos, rewrite = not False, exp_step = 150, feature_extractor = 'orb', feature_matching = 'knn'):
     trainImg = img1
     trainImg_gray = cv2.cvtColor(trainImg, cv2.COLOR_RGB2GRAY)
     queryImg = img2
@@ -105,59 +83,78 @@ def combine(img1, img2, out, pos, rewrite = False, exp_step = 150, feature_extra
     elif feature_matching == 'knn':
         matches = matchKeyPointsKNN(featuresA, featuresB, ratio=0.8, method=feature_extractor)
 
-
     if matches is None:
         return out, pos
-
+    
     kpsA = np.float32([kp.pt for kp in kpsA])
     kpsB = np.float32([kp.pt for kp in kpsB])
     
-    disp_x = 0
+    disp_y = 0
     counter = 0
     if len(matches) > 4:
         ptsA = np.float32([kpsA[m.queryIdx] for m in matches])
         ptsB = np.float32([kpsB[m.trainIdx] for m in matches])
 
-        # max_d = 0
         for m in matches:
             if m.queryIdx == m.trainIdx:
-                if kpsA[m.queryIdx][0] != kpsB[m.trainIdx][0]:
-                    x1, x2 = kpsA[m.queryIdx][0], kpsB[m.trainIdx][0]
-                    # y1, y2 = kpsA[m.queryIdx][1], kpsB[m.trainIdx][1]
-                    disp_x = disp_x + abs(x2-x1)
-                    # disp_x = abs(x2-x1)
-                    # disp_y = y1-y2 # abs(y2-y1)
+                if kpsA[m.queryIdx][1] != kpsB[m.trainIdx][1]:
+                    y1, y2 = kpsA[m.queryIdx][1], kpsB[m.trainIdx][1]
+                    # disp_y = abs(y2 - y1)
+                    disp_y = disp_y + abs(y2 - y1)
                     counter += 1
         if counter > 0:
             disp_y = disp_y // counter
-
-
-    if pos + disp_x + queryImg.shape[1] > out.shape[1]:
+                    
+    
+    if pos + disp_y + queryImg.shape[0] > out.shape[0]:
         if rewrite:
             out = out * 0
             pos = 0
-            disp_x = 0
+            disp_y = 0
         else:
-            new_out = np.zeros((out.shape[0], out.shape[1] + exp_step, 3), np.uint8)
-            new_out[:,:out.shape[1]] = out
+            new_out = np.zeros((out.shape[0] + exp_step, out.shape[1], 3), np.uint8)
+            new_out[:out.shape[0],:] = out
             out = new_out
 
-    # print(int(pos + disp_x), int(pos + disp_x + queryImg.shape[1]), out.shape[1])
-    # print(int(disp_y))
-
-    '''
-    if disp_y >= 0: 
-        out[int(disp_y):, int(pos + disp_x):int(pos + disp_x + queryImg.shape[1])] = queryImg[:queryImg.shape[0]-int(disp_y),:]
-    else:
-        out[:int(disp_y), int(pos + disp_x):int(pos + disp_x + queryImg.shape[1])] = queryImg[-int(disp_y):,:]
-    # '''
+    out[int(pos + disp_y) : int(pos + disp_y + queryImg.shape[0]), :] = queryImg[:,:]
+    # out[int(pos + disp_y):int(pos + disp_y + queryImg.shape[0]-4), :] = queryImg[2:-2,:]
+    pos += disp_y
     
-    out[:, int(pos + disp_x):int(pos + disp_x + queryImg.shape[1])] = queryImg[:,:]
-    # out[:, int(pos + disp_x):int(pos + disp_x + queryImg.shape[1]-4)] = queryImg[:,2:-2]
-    pos += disp_x
-
     return out, pos
-    
+
+
+class Glue:
+    def __init__(self, region):
+        self.region = region
+
+        self.region_w = region[1][0] - region[0][0]
+        self.region_h = region[1][1] - region[0][1]
+
+        self.start_combine = None
+        self.pos = 0
+        self.boundingBox_old = None
+        self.result = np.zeros((self.region_h * 10, self.region_w, 3), np.uint8)
+
+    def run(self, img):
+        boundingBox = img[self.region[0][1] : self.region[1][1],
+                          self.region[0][0] : self.region[1][0]]
+
+        
+        if self.start_combine is None:
+            self.result[:boundingBox.shape[0],:] = boundingBox
+            self.boundingBox_old = boundingBox
+            self.start_combine = 1
+        else:
+            tmp, self.pos = combine(self.boundingBox_old, boundingBox,
+                                    self.result, self.pos,
+                                    exp_step = 150)
+            if not (tmp is None):
+                self.result = tmp.copy()
+
+        self.boundingBox_old = boundingBox
+        return self.result
+
+
 
 if __name__ == '__main__':
 
@@ -167,7 +164,7 @@ if __name__ == '__main__':
         M = cv2.getRotationMatrix2D((cX, cY), angle, 1.0)
         return cv2.warpAffine(img, M, (w, h))
 
-    def getCoordinatesOfRectangle(x, y, height, width):
+    def getCoordinatesOfRectangle(x, y, width, height):
         first = x
         second = y
         third = x + width
@@ -177,34 +174,31 @@ if __name__ == '__main__':
     feature_extractor = 'orb' 
     feature_matching = 'knn'
 
-    video_name = 'D:/КАНДИДАТСКАЯ ДИССЕРТАЦИЯ/Helpfull Demos/341/TestData/VID_20220305_140251_cropped.mp4'
+    video_name = 'D:/КАНДИДАТСКАЯ ДИССЕРТАЦИЯ/Helpfull Demos/341/TestData/VID_20220305_140251.mp4'
     cap = cv2.VideoCapture(video_name)
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  
 
-    first, second, third, fourth = getCoordinatesOfRectangle(150, 100, 500, 500)
-    result = np.zeros((fourth - second, third - first+500, 3), np.uint8)
-    boundingBox_old = None
-    pos = 0
-    start_combine = None
+    first, second, third, fourth = getCoordinatesOfRectangle(933, 50, 500, 500)
+    AREA = [(first, second), (third, fourth)]
+    glue = Glue(AREA)
+
+    # result = np.zeros((fourth - second, third - first, 3), np.uint8)
+    # boundingBox_old = None
+    # pos = 0
+    # start_combine = None
 
     while cap.isOpened():
         ret, img = cap.read()
-        # img = rotate_img(img, 180)
-        boundingBox = img[second:fourth, first:third]
+        if not ret:
+            break
 
-        if start_combine is None:
-            result[:,:boundingBox.shape[1]] = boundingBox
-            boundingBox_old = boundingBox
-            start_combine = 1
-        else:
-            tmp, pos = combine(boundingBox_old, boundingBox, result, pos, exp_step = 150)
-            if not (tmp is None):
-                result = tmp.copy()
+        img = rotate_img(img, 180)
 
-        cv2.imshow('', result)
+        out = glue.run(img)
 
-        boundingBox_old = boundingBox
+        cv2.imshow('1', img)
+        cv2.imshow('2', out)
 
         key = cv2.waitKey(100)
         if key & 0xFF == ord('q') or key & 0xFF == 27:
