@@ -20,6 +20,9 @@ Client
 sudo apt-get install openvpn easy-rsa
 sudo cp -R /usr/share/easy-rsa /etc/openvpn/
 
+service openvpn start
+service openvpn status
+
 sudo nano /etc/openvpn/client/test.conf
 
 >>> insert data from server
