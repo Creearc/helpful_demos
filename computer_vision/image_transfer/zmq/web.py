@@ -34,10 +34,10 @@ def generate():
       continue
     yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
             bytearray(encodedImage) + b'\r\n')
-
+    
 
 if __name__ == '__main__':
-  rec = zmq_module.ZMQ_receiver('192.168.68.205', 5005)
+  rec = zmq_module.ZMQ_receiver('127.0.0.1', 5003)
   rec.run()
   
   app.run(host='0.0.0.0', port=58800, debug=False, threaded=True, use_reloader=False)
