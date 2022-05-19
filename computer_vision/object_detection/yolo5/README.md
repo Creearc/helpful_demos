@@ -17,7 +17,7 @@ https://docs.ultralytics.com/environments/Docker-Quickstart/
 python3 train.py --img 640 --batch 28 --epochs 20 --data ~/datasets/yolo5/cocos/coco_set_4.yaml --weights runs/train/exp15/weights/best.pt
 ```
 ```
-screen -dmS nn -L -Logfile ~/logfile_7.txt python3 train.py --img 640 --batch 28 --epochs 100 --data ~/datasets/yolo5/cocos/coco_set_5.yaml --device 0 --cfg yolov5s.yaml --weights runs/train/exp15/weights/best.pt
+screen -dmS nn -L -Logfile ~/logfile_7.txt python3 train.py --img 640 --batch 28 --epochs 100 --data ~/datasets/yolo5/cocos/coco_set_5.yaml --device 0 --cfg yolov5s.yaml --hyp data/hyps/hyp.scratch-low.yaml --weights runs/train/exp15/weights/best.pt
 ```
 
 ### Оптимальные параметры
