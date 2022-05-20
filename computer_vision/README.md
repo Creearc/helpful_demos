@@ -28,6 +28,12 @@
     - [ ] 6) Поворот (opencv)
     - [ ] 7) Цветовые схемы (RGB, GRAYSCALE, BGR, binary, HSV)
     - [ ] 8) Афинные преобразования (поворот, смещение)
+    - [ ] 9) Быстрое копирование картинок
+             ```
+with open('{}/{}.jpg'.format(folder_path, file[:-4]), 'rb') as src:
+    with open('{}/{}.jpg'.format(output_images, file[:-4]), 'wb') as dst:
+        dst.write(src.read())
+             ```
     - [ ] описания
   + [ ] custom_functions.py
     - [x] 9) Исправление рыбьего глаза
@@ -117,3 +123,4 @@
   - [x] 3) Форматирование аннотации в Coco (сегментация)
   - [ ] 4) Разметка
   - [ ] тесты
+
