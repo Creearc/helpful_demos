@@ -6,7 +6,6 @@ import time
 import io
 import picamera
 
-main_frame = None
 
 class StreamingOutput(object):
     def __init__(self):
@@ -43,6 +42,7 @@ class Camera():
         self.effect = effect
 
         self.multiprocessing = multiprocessing
+        self.stop = False
 
         if not self.multiprocessing:
             import threading
@@ -62,9 +62,11 @@ class Camera():
             self.c = Process(target=self.process, args=())
             self.c.start()
 
+    def stop(self):
+        self.stop = True
+
 
     def process(self):
-        global main_frame, lock
         with picamera.PiCamera(resolution=self.resolution,
                                framerate=self.framerate) as camera:
             output = StreamingOutput()
@@ -76,6 +78,9 @@ class Camera():
             t = time.time()
 
             while True:
+                if self.stop:
+                    break
+                
                 with output.condition:
                     output.condition.wait()
                     frame = output.frame
@@ -83,7 +88,7 @@ class Camera():
                     img = cv2.imdecode(np.frombuffer(frame, np.uint8), 1)
                 except:
                     print('\033[31m[RPI Camera] Frame decode error\033[0m')
-                    time.sleep(0.5)
+                    time.sleep(0.1)
                     continue
 
                 h, w = img.shape[:2]
@@ -110,9 +115,6 @@ class Camera():
                 return self.image_q.get_nowait()
 
         
-            
-
-
 if __name__ == '__main__':
     c = Camera(resolution=(1920, 1080), framerate=30, show_fps=True)
     c.start()
