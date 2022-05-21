@@ -19,9 +19,32 @@ class Camera():
         if use_buffer:
             self.cam.set(cv2.CAP_PROP_BUFFERSIZE, 2)
 
+        self.image = None
+
+        self.multiprocessing = multiprocessing
+        self.stop = False
+
+        if not self.multiprocessing:
+            import threading
+            from threading import Condition
+            self.lock = threading.Lock()
+            
+        else:
+            from multiprocessing import Process, Value, Queue
+            self.image_q = Queue(1)
+
+
+    def start(self):
+        if not self.multiprocessing:
+            self.c = threading.Thread(target=self.process, args=())
+            self.c.start()
+        else:
+            self.c = Process(target=self.process, args=())
+            self.c.start()
+
 
     def stop(self):
-        self.cam.release()        
+        self.stop = True        
 
 
     def get_img(self):

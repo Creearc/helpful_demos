@@ -20,41 +20,40 @@ class Video():
         self.h = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         self.image = None
+        self.show_fps = show_fps
 
         self.fake_camera = fake_camera
         self.infinite = infinite
 
         self.multiprocessing = multiprocessing
-        self.stop = False
+        self.close = False
 
-        if not self.multiprocessing:
-            import threading
-            from threading import Condition
-            self.lock = threading.Lock()
+        if fake_camera:
+            self.start()
             
-        else:
-            from multiprocessing import Process, Value, Queue
-            self.image_q = Queue(1)
-            
-
-    def stop(self):
-        self.stop = True
-
 
     def start(self):
         if not self.multiprocessing:
+            import threading
+            self.lock = threading.Lock()
             self.c = threading.Thread(target=self.process, args=())
             self.c.start()
         else:
+            from multiprocessing import Process, Value, Queue
+            self.image_q = Queue(1)
             self.c = Process(target=self.process, args=())
             self.c.start()
+
+
+    def stop(self):
+        self.close = True
 
 
     def process(self):
         t = time.time()
 
         while True:
-            if self.stop:
+            if self.close:
                 break
 
             ret, img = self.cam.read()
@@ -63,12 +62,14 @@ class Video():
                 time.sleep(0.1)
                 continue
 
+            print(type(img))
+
             if not self.multiprocessing:
                 with self.lock:
                     self.image = img.copy()
             else:
                 if not self.image_q.full():
-                    self.image_q.put_nowait(image.copy())
+                    self.image_q.put_nowait(img.copy())
 
             if self.show_fps:
                 print('\033[34m[Video] FPS: {}\033[0m'.format(1 / (time.time() - t)))
@@ -120,6 +121,19 @@ if __name__ == '__main__':
         path = '../data/Run_Pavel_Run1.mp4'
         c = Video(path, fake_camera=False, infinite=True)
         for frame_number, img in c.get_img(loop=True):
+            cv2.imshow('img', img)
+            if cv2.waitKey(1) == 27:
+                break
+        cv2.destroyAllWindows()
+        c.stop()
+
+        path = '../data/Run_Pavel_Run1.mp4'
+        c = Video(path, fake_camera=True, infinite=True)
+        while True:
+            img = c.get_img()
+            print(type(img))
+            if img is None:
+                continue
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
