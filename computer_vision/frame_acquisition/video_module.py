@@ -21,6 +21,13 @@ class Video():
         self.frame_rate = int(self.cam.get(cv2.CAP_PROP_FPS))
         self.w = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.h = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print('\033[31m[Video] No Frame\033[0m')
+
+        print('\033[32m[Video]\nPath {}\nScale {}x{}\nFrame count {}\nFrame rate {}\033[0m'.format(path,
+                                                                                                self.w,
+                                                                                                self.h,
+                                                                                                self.frame_count,
+                                                                                                self.frame_rate))
 
         self.first_frame = first_frame
         self.last_frame = self.frame_count if last_frame is None else last_frame
@@ -71,8 +78,6 @@ class Video():
                 time.sleep(0.1)
                 continue
 
-            print(type(img))
-
             if not self.multiprocessing:
                 with self.lock:
                     self.image = img.copy()
@@ -93,9 +98,30 @@ class Video():
                 t = time.time()
             
         self.cam.release()
+
+    def img_generator(self):
+        frame_number = self.first_frame
+                
+        while frame_number < self.last_frame:
+            self.cam.set(1, frame_number)
+            ret, img = self.cam.read()
+            if not ret:
+                print('\033[31m[Video] No Frame\033[0m')
+                time.sleep(0.1)
+                continue
+
+            yield frame_number, img
+
+            frame_number += self.step
+            
+            if frame_number >= self.last_frame:
+                if self.infinite:
+                    frame_number = self.first_frame
+                else:
+                    self.cam.release()
                 
 
-    def get_img(self, loop=False):
+    def get_img(self):
         if self.fake_camera:
             if not self.multiprocessing:
                 with self.lock:
@@ -104,37 +130,15 @@ class Video():
                 if not self.depth_q.empty(): 
                     return self.image_q.get_nowait()
         else:
-            if loop:
-                frame_number = self.first_frame
-                
-                while frame_number < self.last_frame:
-                    self.cam.set(1, frame_number)
-                    ret, img = self.cam.read()
-                    if not ret:
-                        print('\033[31m[Video] No Frame\033[0m')
-                        time.sleep(0.1)
-                        continue
-
-                    yield frame_number, img
-
-                    frame_number += self.step
-                    
-                    if frame_number >= self.last_frame:
-                        if self.infinite:
-                            frame_number = self.first_frame
-                        else:
-                            self.cam.release()        
-                    
-            else:
-                ret, img = self.cam.read()
-                return img
+            ret, img = self.cam.read()
+            return img
 
 
 if __name__ == '__main__':
     try:
         path = '../data/Run_Pavel_Run1.mp4'
         c = Video(path, fake_camera=False, infinite=True)
-        for frame_number, img in c.get_img(loop=True):
+        for frame_number, img in c.img_generator():
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
@@ -145,13 +149,13 @@ if __name__ == '__main__':
         c = Video(path, fake_camera=True, infinite=True)
         while True:
             img = c.get_img()
-            print(type(img))
             if img is None:
                 continue
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
         cv2.destroyAllWindows()
+        c.stop()
         
     except KeyboardInterrupt:
         sys.exit()
