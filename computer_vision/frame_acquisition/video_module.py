@@ -7,6 +7,9 @@ import time
 class Video():
     def __init__(self,
                  path,
+                 first_frame=0,
+                 last_frame=None,
+                 step=1,
                  fake_camera=False,
                  infinite=False,
                  multiprocessing=False,
@@ -18,6 +21,10 @@ class Video():
         self.frame_rate = int(self.cam.get(cv2.CAP_PROP_FPS))
         self.w = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.h = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        self.first_frame = first_frame
+        self.last_frame = self.frame_count if last_frame is None else last_frame
+        self.step = step
 
         self.image = None
         self.show_fps = show_fps
@@ -52,10 +59,12 @@ class Video():
     def process(self):
         t = time.time()
 
-        while True:
+        frame_number = self.first_frame
+        while frame_number < self.last_frame:
             if self.close:
                 break
-
+            
+            self.cam.set(1, frame_number)
             ret, img = self.cam.read()
             if not ret:
                 print('\033[31m[Video] No Frame\033[0m')
@@ -71,6 +80,14 @@ class Video():
                 if not self.image_q.full():
                     self.image_q.put_nowait(img.copy())
 
+            frame_number += self.step
+                    
+            if frame_number >= self.last_frame:
+                if self.infinite:
+                    frame_number = self.first_frame
+                else:
+                    self.cam.release()
+
             if self.show_fps:
                 print('\033[34m[Video] FPS: {}\033[0m'.format(1 / (time.time() - t)))
                 t = time.time()
@@ -78,7 +95,7 @@ class Video():
         self.cam.release()
                 
 
-    def get_img(self, loop=False, first_frame=0, last_frame=None, step=1):
+    def get_img(self, loop=False):
         if self.fake_camera:
             if not self.multiprocessing:
                 with self.lock:
@@ -88,12 +105,9 @@ class Video():
                     return self.image_q.get_nowait()
         else:
             if loop:
-                if last_frame is None:
-                    last_frame = self.frame_count
-
-                frame_number = first_frame
+                frame_number = self.first_frame
                 
-                while first_frame < last_frame:
+                while frame_number < self.last_frame:
                     self.cam.set(1, frame_number)
                     ret, img = self.cam.read()
                     if not ret:
@@ -103,11 +117,11 @@ class Video():
 
                     yield frame_number, img
 
-                    frame_number += step
+                    frame_number += self.step
                     
-                    if frame_number >= last_frame:
+                    if frame_number >= self.last_frame:
                         if self.infinite:
-                            frame_number = first_frame
+                            frame_number = self.first_frame
                         else:
                             self.cam.release()        
                     
