@@ -4,6 +4,7 @@ import time
 import threading
 import tkinter as tk
 import requests
+import random
 
 
 import cv2
@@ -53,10 +54,8 @@ def rgb_hack(rgb):
     return "#%02x%02x%02x" % rgb
 
 SERVER_IP = 'http://127.0.0.1:8081'
-  
 
-config = ['крепление',
-          'дощечка']
+config = ['class_1', 'class_2', 'class_3']
 
 s0 = '''Нажмите "Сохранить", затем "Следующее изображение",\n''' \
      '''чтобы открыть следующее изображение'''
@@ -76,8 +75,11 @@ image = None
 file_name = None
 
 CONF_FILE = 'conf.svz'
-DATASET_PATH = 'images/train'
-OUTPUT_DATASET_PATH = 'val'
+DATASET_PATH = 'data'
+OUTPUT_DATASET_PATH = 'annotated'
+
+files = os.listdir(DATASET_PATH)
+random.shuffle(files)
 
 def cv_process():
   global image, state, selected_class, bboxes, text_var
@@ -110,13 +112,13 @@ def cv_process():
         state = 0
         out = frame.copy()    
         cv2.rectangle(out, (0, 0), (out.shape[1], out.shape[0]),
-                    (0, 255, 255), 20)
+                    (0, 255, 255), 5)
         text_var.set(s1)
         bbox = cv2.selectROI("", out, fromCenter=False, showCrosshair=True)
         text_var.set(s0)
 
         if bbox != (0, 0, 0, 0):
-          bboxes.append((bbox, selected_class.get()))        
+          bboxes.append((bbox, selected_class.get()))
 
     elif state == -1:
         break
@@ -134,12 +136,12 @@ def delete_click():
 
 def save_click():
   global bboxes, file_name, image, text_var
-  if len(bboxes) >= 1:
+  if True: #len(bboxes) >= 1:
     text_var.set('Идет сохранение')
     height, width = image.shape[:2]
     with open('{}/{}.txt'.format(OUTPUT_DATASET_PATH, file_name.split('.')[0]), 'w') as f:
       for box in bboxes:
-        x, y, h, w = box[0]
+        x, y, w, h = box[0]
         
         x = round((x + w // 2) / width, 4)
         y = round((y + h // 2) / height, 4)
@@ -155,24 +157,27 @@ def save_click():
 
 
 def get_click():
-  global user_id, image, file_name, text_var, bboxes, get_button_text
+  global user_id, image, file_name, text_var, bboxes, get_button_text, files
   print(1)
   get_button_text.set("Следующее изображение")
   text_var.set(s0)
 
   bboxes = []
-
-  files = os.listdir(DATASET_PATH)
   
   if len(files) <= 0:
     text_var.set(s0)
   else:
     print('Loading new image')
     file_name = files[0]
+    files.pop(0)
     print(file_name)
     image = cv2.imread('{}/{}'.format(DATASET_PATH, file_name))
-    image = cv2.resize(image, (1280, 720), interpolation=cv2.INTER_AREA)
+    #image = cv2.resize(image, (1280, 720), interpolation=cv2.INTER_AREA)
     os.remove('{}/{}'.format(DATASET_PATH, file_name))
+
+    file_name = '{}.jpg'.format(str(time.ctime()).replace(':', '_'))
+
+    print(file_name)
 
       
 def close_click():
@@ -262,3 +267,4 @@ if __name__ == '__main__':
         sys.exit()
     
   
+
