@@ -9,9 +9,10 @@ import picamera
 
 class StreamingOutput(object):
     def __init__(self):
+        import threading
         self.frame = None
         self.buffer = io.BytesIO()
-        self.condition = Condition()
+        self.condition = threading.Condition()
 
     def write(self, buf):
         if buf.startswith(b'\xff\xd8'):
@@ -46,20 +47,21 @@ class Camera():
 
         if not self.multiprocessing:
             import threading
-            from threading import Condition
+            self.run_method = threading
             self.lock = threading.Lock()
             
         else:
-            from multiprocessing import Process, Value, Queue
+            import multiprocessing
+            from multiprocessing import Queue
             self.image_q = Queue(1)
 
 
     def start(self):
         if not self.multiprocessing:
-            self.c = threading.Thread(target=self.process, args=())
+            self.c = self.run_method.Thread(target=self.process, args=())
             self.c.start()
         else:
-            self.c = Process(target=self.process, args=())
+            self.c = self.run_method.Process(target=self.process, args=())
             self.c.start()
 
     def stop(self):
@@ -76,6 +78,8 @@ class Camera():
             camera.image_effect = self.effect
 
             t = time.time()
+
+            print('Process is started')
 
             while True:
                 if self.stop:
@@ -99,7 +103,7 @@ class Camera():
                         self.image = img.copy()
                 else:
                     if not self.image_q.full():
-                        self.image_q.put_nowait(image.copy())
+                        self.image_q.put_nowait(img.copy())
 
                 if self.show_fps:
                     print('\033[34m[RPI Camera] FPS: {}\033[0m'.format(1 / (time.time() - t)))
@@ -124,3 +128,5 @@ if __name__ == '__main__':
         if img is None:
             print('empty')
             continue
+        else:
+            print(img.shape)

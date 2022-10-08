@@ -12,13 +12,14 @@ def load_img(path, img_name):
         return ''
     
 
+last_path = os.popen("ls -lt ~/yolov5/runs/train/").read().split('\n')[1].split()[-1]
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
-    dcc.Input(id='input-1', type='text', value='runs/train/diameter9/'),
+    dcc.Input(id='input-1', type='text', value='runs/train/{}/'.format(last_path)),
     html.Button(id='submit-button-state', n_clicks=0, children='Submit'),
     html.Div(id='output-state'),
     

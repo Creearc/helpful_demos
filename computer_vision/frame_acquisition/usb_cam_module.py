@@ -5,7 +5,7 @@ import time
 
 
 class Camera():
-    def __init__(self, src=0, WIDTH=1280, HEIGHT=720, use_buffer=True):
+    def __init__(self, src=0, WIDTH=1280, HEIGHT=720, use_buffer=True, multiprocessing=False):
         self.src = src
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
@@ -26,20 +26,22 @@ class Camera():
 
         if not self.multiprocessing:
             import threading
-            from threading import Condition
+            self.run_method = threading
             self.lock = threading.Lock()
             
         else:
-            from multiprocessing import Process, Value, Queue
+            import multiprocessing
+            from multiprocessing import Queue
+            self.run_method = multiprocessing
             self.image_q = Queue(1)
 
 
     def start(self):
         if not self.multiprocessing:
-            self.c = threading.Thread(target=self.process, args=())
+            self.c = self.run_method.Thread(target=self.process, args=())
             self.c.start()
         else:
-            self.c = Process(target=self.process, args=())
+            self.c = self.run_method.Process(target=self.process, args=())
             self.c.start()
 
 
@@ -47,23 +49,44 @@ class Camera():
         self.stop = True        
 
 
-    def get_img(self):
+    def process(self):
         while self.cam.isOpened():
             ret, img = self.cam.read()
             if not ret:
                 time.sleep(0.1)
                 continue
-            yield img
+            
+            if not self.multiprocessing:
+                with self.lock:
+                    self.image = img.copy()
+            else:
+                if not self.image_q.full():
+                    self.image_q.put_nowait(img.copy())
+        
+
+    def get_img(self):
+        if not self.multiprocessing:
+            with self.lock:
+                return self.image
+        else:
+            if not self.depth_q.empty(): 
+                return self.image_q.get_nowait()
 
 
 if __name__ == '__main__':
     try:
         c = Camera(0)
-        for img in c.get_img():
+        c.start()
+        
+        while True:
+            img = c.get_img()
+            if img is None:
+                print('empty')
+                continue
             cv2.imshow('img', img)
             if cv2.waitKey(1) == 27:
                 break
-        c.stop()
+        c.stop = True
         cv2.destroyAllWindows()
         
     except KeyboardInterrupt:
