@@ -1,0 +1,5 @@
+https://developer.nvidia.com/cuda-10.1-download-archive-base?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exelocal
+
+https://developer.nvidia.com/rdp/cudnn-archive
+## Download cuDNN v7.6.5 (November 5th, 2019), for CUDA 10.1
+https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.1_20191031/cudnn-10.1-windows10-x64-v7.6.5.32.zip
