@@ -1,0 +1,16 @@
+
+# cuDNN
+https://developer.nvidia.com/rdp/cudnn-archive
+
+# PATH
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\libnvvp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\extras\CUPTI\lib64
+
+# System variables
+CUDA_PATH C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1
+CUDA_PATH_V10_1 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1
+
+ python -m pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html 
+
+ python -c "import torch; print('CUDA available' if torch.cuda.is_available() else 'CUDA not available')" 
