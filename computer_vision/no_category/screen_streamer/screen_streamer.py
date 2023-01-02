@@ -28,6 +28,7 @@ def generate():
     if img is None:
       time.sleep(0.1)
       continue
+    img = cv2.resize(img, (1920 // 2, 1080 // 2))
     (flag, encodedImage) = cv2.imencode(".jpg", img)
     if not flag:
       time.sleep(0.1)
