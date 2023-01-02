@@ -8,7 +8,7 @@ from flask import Response
 from flask import Flask
 from flask import render_template
 
-import screen_capture
+import screen_capture_mod
 
 app = Flask(__name__)
 
@@ -28,7 +28,7 @@ def generate():
     if img is None:
       time.sleep(0.1)
       continue
-    img = cv2.resize(img, (1920 // 2, 1080 // 2))
+    
     (flag, encodedImage) = cv2.imencode(".jpg", img)
     if not flag:
       time.sleep(0.1)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
   width = 1920
   height = 1080
 
-  s = screen_capture.Screen(screen_width=width, screen_height=height)
+  s = screen_capture_mod.Screen(screen_width=width, screen_height=height)
   s.start()
   
   app.run(host='0.0.0.0', port=5888, debug=False, threaded=True, use_reloader=False)
