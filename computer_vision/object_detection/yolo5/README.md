@@ -20,6 +20,12 @@ python3 train.py --img 640 --batch 28 --epochs 20 --data ~/datasets/yolo5/cocos/
 screen -dmS nn -L -Logfile ~/logfile_7.txt python3 train.py --img 640 --batch 28 --epochs 100 --data ~/datasets/yolo5/cocos/coco_set_5.yaml --device 0 --cfg yolov5s.yaml --hyp data/hyps/hyp.scratch-low.yaml --label-smoothing 0.2 --weights runs/train/exp15/weights/best.pt
 ```
 
+
+### Запуск валидации
+```
+python3 val.py  --data ~/datasets/fallen_knots_10.yaml --weights runs/train/rebroskleyka_project/fallen_knots_mix_s_640_04/weights/best.pt --batch-size 18 --task train
+```
+
 ### Оптимальные параметры
 ```
 nano data/hyps/hyp.scratch-low.yaml
