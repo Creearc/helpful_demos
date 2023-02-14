@@ -38,7 +38,7 @@ class Screen():
     def process(self):
         while not self.stop:
             img = np.array(self.sct.grab(self.monitor))
-            img = cv2.resize(img, (1920 // 3, 1080 // 3))
+            img = cv2.resize(img, (1920, 1080))
             
             with self.lock:
                 self.image = img.copy()
