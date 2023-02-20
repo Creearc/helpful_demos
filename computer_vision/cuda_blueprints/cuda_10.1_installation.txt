@@ -4,6 +4,19 @@ sudo apt --purge remove cuda-*
 sudo apt install -y dkms git
 
 sudo apt update && sudo apt upgrade -y
+sudo apt install screen 
+
+# FTP
+sudo apt-get install vsftpd
+sudo nano /etc/vsftpd.conf
+```
+write_enable=YES
+ascii_upload_enable=YES
+ascii_download_enable=YES
+```
+
+sudo service vsftpd restart
+
 # ubuntu-drivers devices
 sudo apt update
 sudo apt install nvidia-driver-418
@@ -15,11 +28,13 @@ sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
 sudo apt-get update
 
 sudo apt-get install cuda-toolkit-10.1
-sudo nano ~/.bashrc
 
+sudo nano ~/.bashrc
+```
 # NVIDIA CUDA Toolkit
 export PATH=/usr/local/cuda-10.1/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64
+```
 
 source ~/.bashrc
 
