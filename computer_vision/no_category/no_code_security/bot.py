@@ -8,7 +8,7 @@ import usb_cam_module
 import cv2
 import yolov5
 
-TOKEN = '5040329247:AAHsiB7CVeOkkfNuAFm_JH8px--YB5wMoS0'
+TOKEN = 'token'
 filename = 'ids.txt'
 f = open(filename, 'a')
 f.write('')
