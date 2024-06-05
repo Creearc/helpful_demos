@@ -2,3 +2,9 @@
 *commit_2.0.py
 *.gif
 *.mp4
+computer_vision/no_category/no_code_security/yolov5*
+*.wav
+*.mp3
+*.avi
+pdf_2_img/result/*
+pdf_2_img/tmp/*

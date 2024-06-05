@@ -178,7 +178,7 @@ def generate(classes,
 
             obj, name = random_img(imgs_dir)
             if random.randint(0, 1) == 1:
-                obj = cv2.rotate(obj, cv2.cv2.ROTATE_90_CLOCKWISE)
+                obj = cv2.rotate(obj, cv2.ROTATE_90_CLOCKWISE)
             else:
                 obj = cv2.rotate(obj, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
